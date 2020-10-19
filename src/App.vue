@@ -12,6 +12,8 @@ export default defineComponent({
     Countdown
   }
 })
+
+console.log('test sw')
 </script>
 
 <style lang="stylus">
