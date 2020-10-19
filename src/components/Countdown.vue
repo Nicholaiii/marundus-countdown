@@ -1,6 +1,6 @@
 <template lang="pug">
 .countdown(v-if="!isGameOn")
-  h2 Next marundus game is
+  h2 Next marundus game is in
   h2 {{ timeToNextGame }}
 .currently-playing(v-else)
   h2 You are currently playing!
