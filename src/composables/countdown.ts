@@ -6,16 +6,17 @@ import {
   set,
   intervalToDuration,
   isWithinInterval,
-  formatDuration
+  formatDuration,
+  subHours
 } from 'date-fns/fp'
 
 const now = () => new Date()
 const setGameHours = set({ hours: 18, minutes: 0, seconds: 0, milliseconds: 0 })
 const addGameTime = add({ hours: 5 })
 const nextWeek = add({ weeks: 1 })
+const anHourBefore = subHours(1)
 const setTuesday = setDay(2)
 const isPastTuesday = () => getDay(now()) > 2
-
 const getNextGameDate = () => {
   const thisTuesday = setTuesday(now())
   const nextGameDay = isPastTuesday() ? nextWeek(thisTuesday) : thisTuesday
@@ -26,6 +27,11 @@ const getNextGameDate = () => {
 const getIsGameOn = (nextGameDay: Date) => isWithinInterval({
   start: nextGameDay,
   end: addGameTime(nextGameDay)
+}, now())
+
+const getIsGameClose = (nextGameDay: Date) => isWithinInterval({
+  start: anHourBefore(nextGameDay),
+  end: nextGameDay
 }, now())
 
 const formatTimeToNextGame = (nextGameDay: Date): string => {
@@ -43,11 +49,13 @@ export const useCountdown = () => {
 
   const isGameOn = ref(getIsGameOn(nextGameDay))
   const timeToNextGame = ref(formatTimeToNextGame(nextGameDay))
+  const isGameClose = ref(getIsGameClose(nextGameDay))
 
   setInterval(() => {
     isGameOn.value = getIsGameOn(nextGameDay)
     timeToNextGame.value = formatTimeToNextGame(nextGameDay)
+    isGameClose.value = getIsGameClose(nextGameDay)
   }, 1000)
 
-  return { timeToNextGame, isGameOn }
+  return { timeToNextGame, isGameOn, isGameClose }
 }

@@ -2,8 +2,10 @@
 .countdown(v-if="!isGameOn")
   h2 Next marundus game is in
   h2 {{ timeToNextGame }}
+  img(v-show="isGameClose" src="@/assets/rana_on_drugs.gif").flip.med
 .currently-playing(v-else)
   h2 You are currently playing!
+
 </template>
 
 <script>
@@ -18,6 +20,9 @@ export default defineComponent({
 })
 </script>
 
-<style>
-
+<style lang="stylus">
+.flip
+  transform scaleX(-1)
+.med
+  max-width 60%
 </style>
