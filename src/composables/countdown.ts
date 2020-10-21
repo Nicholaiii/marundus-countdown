@@ -9,6 +9,7 @@ import {
   formatDuration,
   subHours
 } from 'date-fns/fp'
+import { timer } from 'rxjs'
 
 const now = () => new Date()
 const setGameHours = set({ hours: 18, minutes: 0, seconds: 0, milliseconds: 0 })
@@ -43,19 +44,19 @@ const formatTimeToNextGame = (nextGameDay: Date): string => {
 
   return formatDuration(duration)
 }
-
+const everySecond = timer(0, 1000)
 export const useCountdown = () => {
-  const nextGameDay = getNextGameDate()
+  const timeToNextGame = ref()
+  const isGameClose = ref()
+  const isGameOn = ref()
 
-  const isGameOn = ref(getIsGameOn(nextGameDay))
-  const timeToNextGame = ref(formatTimeToNextGame(nextGameDay))
-  const isGameClose = ref(getIsGameClose(nextGameDay))
+  everySecond.subscribe(() => {
+    const nextGameDay = getNextGameDate()
 
-  setInterval(() => {
-    isGameOn.value = getIsGameOn(nextGameDay)
     timeToNextGame.value = formatTimeToNextGame(nextGameDay)
     isGameClose.value = getIsGameClose(nextGameDay)
-  }, 1000)
+    isGameOn.value = getIsGameOn(nextGameDay)
+  })
 
   return { timeToNextGame, isGameOn, isGameClose }
 }
